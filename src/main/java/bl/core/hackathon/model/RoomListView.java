@@ -1,11 +1,13 @@
 package bl.core.hackathon.model;
 
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import bl.core.rest.model.RoomListViewSerializer;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({  
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"location",
 	"booked_start_date",
 	"booked_end_date"})
+@JsonDeserialize(using = RoomListViewSerializer.class)
 public class RoomListView {
 	
 
@@ -44,10 +47,10 @@ public class RoomListView {
 	private String location;
 
 	@JsonProperty("booked_start_date")
-	private List<Date> bookedStartDate;
+	private List<String> bookedStartDate;
 
 	@JsonProperty("booked_end_date")
-	private List<Date> bookedEndDate;
+	private List<String> bookedEndDate;
 	
 	public String getBuildingName() { 
 		return buildingName;
@@ -79,16 +82,24 @@ public class RoomListView {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	public List<Date> getBookedStartDate() {
+
+	@JsonProperty("booked_start_date")
+	public List<String> getBookedStartDate() {
 		return bookedStartDate;
 	}
-	public void setBookedStartDate(List<Date> bookedStartDate) {
+
+	@JsonProperty("booked_start_date")
+	public void setBookedStartDate(List<String> bookedStartDate) {
 		this.bookedStartDate = bookedStartDate;
 	}
-	public List<Date> getBookedEndDate() {
+
+	@JsonProperty("booked_end_date")
+	public List<String> getBookedEndDate() {
 		return bookedEndDate;
 	}
-	public void setBookedEndDate(List<Date> bookedEndDate) {
+
+	@JsonProperty("booked_end_date")
+	public void setBookedEndDate(List<String> bookedEndDate) {
 		this.bookedEndDate = bookedEndDate;
 	}
 	

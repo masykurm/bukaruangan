@@ -1,26 +1,35 @@
 create database hackhaton_2017;
 
-CREATE TABLE `hackhaton_2017`.`room` (
-  `id` INT NOT NULL,
-  `building_id` INT NULL,
-  `room_name` VARCHAR(128) NULL,
-  `room_capacity` INT NULL,
-  `room_location` VARCHAR(128) NULL,
-  PRIMARY KEY (`id`));
+CREATE TABLE `room` (
+  `id` int(11) NOT NULL,
+  `building_id` int(11) DEFAULT NULL,
+  `room_name` varchar(128) DEFAULT NULL,
+  `room_capacity` int(11) DEFAULT NULL,
+  `room_location` varchar(128) DEFAULT NULL,
+  `facilities` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
   
+CREATE TABLE `building` (
+  `id` int(11) NOT NULL,
+  `name` varchar(45) DEFAULT NULL,
+  `location` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
   
-CREATE TABLE `hackhaton_2017`.`building` (
-  `id` INT NOT NULL,
-  `name` VARCHAR(128) NULL,
-  `location` VARCHAR(256) NULL,
-  PRIMARY KEY (`id`));
-  
-CREATE TABLE `hackhaton_2017`.`booked_room` (
-  `id` INT NOT NULL,
-  `building_name` VARCHAR(128) NULL,
-  `room_name` VARCHAR(128) NULL,
-  `booked_date` datetime NULL, 
-  `booked_by` VARCHAR(128) NULL,
-  `meeting_name` VARCHAR(128) NULL,
-  `created_date` timestamp NULL,
-  PRIMARY KEY (`id`));
+CREATE TABLE `booked_room` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_id` int(11) DEFAULT NULL,
+  `building_id` int(11) DEFAULT NULL,
+  `building_name` varchar(45) DEFAULT NULL,
+  `room_name` varchar(45) DEFAULT NULL,
+  `booked_start_date` datetime DEFAULT NULL,
+  `booked_end_date` datetime DEFAULT NULL,
+  `booked_by` varchar(45) DEFAULT NULL,
+  `meeting_name` varchar(45) DEFAULT NULL,
+  `created_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+

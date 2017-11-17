@@ -2,6 +2,7 @@ package bl.core.hackathon.rest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bl.core.hackathon.model.BookedRoom;
 import bl.core.hackathon.model.Building;
@@ -29,7 +35,7 @@ public class RoomController {
 	private RoomService roomService;
 
 	// TODO: 
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms")
+	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms/book")
 	public ResponseEntity<?> bookRoom(@RequestBody BookedRoom bookedRoom) {
 
 		int code = roomService.bookRoom(bookedRoom);
@@ -48,12 +54,11 @@ public class RoomController {
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms/available/{buildingId}/{meetingDate}")
 	public ResponseEntity<?> getAvailableRooms(
 			@PathVariable(name = "buildingId") Integer buildingId,
-			@PathVariable(name="meetingDate") String meetingDateString)  {
-		
-		System.out.println("date :"+meetingDateString);
+			@PathVariable(name="meetingDate") String meetingDateString) throws JsonProcessingException  {
 
 		List<RoomListView> out = roomService.getAvailableRooms(buildingId, meetingDateString);
-
+		
+		 
 		SchemaResponse response = new SchemaResponse();
 		response.setData(out);
 		response.setMetaResponse(new SchemaMetaResponse(HttpStatus.OK.toString(), out.size()));
