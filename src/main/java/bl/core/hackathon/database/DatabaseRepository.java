@@ -107,17 +107,16 @@ public class DatabaseRepository {
 
 	public List<RoomListView> getAvailableRooms(Integer buildingId, String meetingDate) {
 
-		String queryTemplate = "select c.name 'building_name', a.room_name, a.room_capacity, a.facilities, c.location, DATE_FORMAT(bb.booked_start_date,'%d-%m-%Y %H:%i:%s') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%d-%m-%Y %H:%i:%s') 'booked_end_date' \n" + 
+		String query = "select c.name 'building_name',a.id 'room_id', a.room_name, a.room_capacity, a.facilities, c.location, DATE_FORMAT(bb.booked_start_date,'%d-%m-%Y %H:%i:%s') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%d-%m-%Y %H:%i:%s') 'booked_end_date' \n" + 
 				"from room a\n" + 
 				"left join (\n" + 
 				"	select b.*\n" + 
 				"    from booked_room b\n" + 
-				"    where b.booked_start_date = between '%s' and '%s 23:59:59'\n" + 
+				"    where b.booked_start_date between '"+meetingDate+"' and '"+meetingDate+" 23:59:59'\n" + 
 				") bb on (a.id = bb.room_id)\n" + 
 				"left join building c on (a.building_id = c.id)"; 
 		
-		String query = String.format(queryTemplate, meetingDate);
-		
+		System.out.println("query : "+query);
 		List<Map<String,Object>> rows = c3p0JdbcTemplate.queryForList(query);
 		List<RoomListView> result = new ArrayList<RoomListView>();
 		
@@ -131,9 +130,11 @@ public class DatabaseRepository {
 			Integer currentRoomId = Integer.valueOf(row.get("room_id").toString());
 			if(roomId != currentRoomId) {
 				
-				room.setBookedStartDate(bookedStartDate);
-				room.setBookedStartDate(bookedEndDate);
-				result.add(room);
+				if(roomId != -99) {
+					room.setBookedStartDate(bookedStartDate);
+					room.setBookedEndDate(bookedEndDate);
+					result.add(room);
+				}
 				
 				room = new RoomListView();
 				room.setBuildingName(row.get("building_name").toString());
@@ -145,6 +146,7 @@ public class DatabaseRepository {
 				
 				bookedStartDate.clear();
 				bookedEndDate.clear();
+				roomId = room.getRoomId();
 			} else {
 				
 				Object o =row.get("booked_start_date");

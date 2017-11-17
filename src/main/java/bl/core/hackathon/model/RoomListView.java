@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({  
 	"building_name", 
+	"room_id",  
 	"room_name", 
 	"room_capacity", 
 	"facilities", 

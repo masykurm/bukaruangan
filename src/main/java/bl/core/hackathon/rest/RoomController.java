@@ -49,6 +49,8 @@ public class RoomController {
 	public ResponseEntity<?> getAvailableRooms(
 			@PathVariable(name = "buildingId") Integer buildingId,
 			@PathVariable(name="meetingDate") String meetingDateString)  {
+		
+		System.out.println("date :"+meetingDateString);
 
 		List<RoomListView> out = roomService.getAvailableRooms(buildingId, meetingDateString);
 
