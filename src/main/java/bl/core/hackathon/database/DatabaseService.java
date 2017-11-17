@@ -1,6 +1,5 @@
 package bl.core.hackathon.database;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +44,15 @@ public class DatabaseService implements DatabaseServiceInterface {
 
 		return repository.getAvailableRooms(buildingId, meetingDate);
 	}
+	
+	public List<RoomListView> getBookedRoomByUser(String bookedBy){
+		return repository.getBookedRoomByUser(bookedBy);
+	}
 
 	public int bookRoom(BookedRoom room) {
 
 		return repository.bookRoom(room);
+		
 	}
 
 }

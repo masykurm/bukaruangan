@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import bl.core.hackathon.database.DatabaseRepository;
-import bl.core.hackathon.database.DatabaseService;
 
 @Configuration
 public class DatabaseConfiguration {

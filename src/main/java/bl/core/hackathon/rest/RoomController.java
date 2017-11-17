@@ -1,9 +1,5 @@
 package bl.core.hackathon.rest;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bl.core.hackathon.model.BookedRoom;
 import bl.core.hackathon.model.Building;
@@ -57,6 +50,20 @@ public class RoomController {
 			@PathVariable(name="meetingDate") String meetingDateString) throws JsonProcessingException  {
 
 		List<RoomListView> out = roomService.getAvailableRooms(buildingId, meetingDateString);
+		
+		 
+		SchemaResponse response = new SchemaResponse();
+		response.setData(out);
+		response.setMetaResponse(new SchemaMetaResponse(HttpStatus.OK.toString(), out.size()));
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms/list/{bookedBy}")
+	public ResponseEntity<?> getAvailableRooms(
+			@PathVariable(name = "bookedBy") String bookedBy) throws JsonProcessingException  {
+
+		List<RoomListView> out = roomService.getBookedRoomByUser(bookedBy);
 		
 		 
 		SchemaResponse response = new SchemaResponse();

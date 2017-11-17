@@ -1,6 +1,5 @@
 package bl.core.hackathon.rest;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +37,10 @@ public class RoomService {
 	public List<RoomListView> getAvailableRooms(Integer buildingId, String meetingDate) {
 
 		return service.getAvailableRooms(buildingId,meetingDate);
+	}
+	
+	public List<RoomListView> getBookedRoomByUser(String bookedBy){
+		return service.getBookedRoomByUser(bookedBy);
 	}
 
 	public int bookRoom(BookedRoom room) {

@@ -2,13 +2,7 @@ package bl.core.hackathon.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -119,12 +113,11 @@ public class DatabaseRepository {
 				") bb on (a.id = bb.room_id)\n" + 
 				"left join building c on (a.building_id = c.id) order by c.name"; 
 		
-//		System.out.println("query : "+query);
 		List<Map<String,Object>> rows = c3p0JdbcTemplate.queryForList(query);
 		List<RoomListView> result = new ArrayList<RoomListView>();
 		
 		Integer roomId= Integer.valueOf(rows.get(0).get("room_id").toString());
-		Map row = rows.get(0);
+		Map<String, Object> row = rows.get(0);
 		RoomListView room = new RoomListView();
 		room.setBuildingName(row.get("building_name").toString());
 		room.setFacilities(row.get("facilities").toString());
@@ -134,17 +127,7 @@ public class DatabaseRepository {
 		room.setRoomName(row.get("room_name").toString());
 		room.setBookedStartDate(new ArrayList<>());
 		room.setBookedEndDate(new ArrayList<>());
-		Object o =row.get("booked_start_date");
-		if (o != null) {
-			room.getBookedStartDate().add(o.toString());
-		}
-		
-		Object o1 =row.get("booked_end_date");
-		if (o1 != null) {
-			room.getBookedEndDate().add(o1.toString());
-		}
-		List<String> bookedStartDate = new ArrayList<>();
-		List<String> bookedEndDate = new ArrayList<>();
+	
 		for(int i=0;i<rows.size();i++) {
 			row = rows.get(i);
 			Integer currentRoomId = Integer.valueOf(row.get("room_id").toString());
@@ -161,35 +144,105 @@ public class DatabaseRepository {
 				room.setRoomName(row.get("room_name").toString());
 				room.setBookedStartDate(new ArrayList<>());
 				room.setBookedEndDate(new ArrayList<>());
-				o =row.get("booked_start_date");
+				Object o =row.get("booked_start_date");
 				if (o != null) {
 					room.getBookedStartDate().add(o.toString());
 				}
 				
-				o1 =row.get("booked_end_date");
+				Object o1 =row.get("booked_end_date");
 				if (o1 != null) {
 					room.getBookedEndDate().add(o1.toString());
 				}
 				roomId = room.getRoomId();
 			} else {
-				o =row.get("booked_start_date");
+				Object o =row.get("booked_start_date");
 				if (o != null) {
-//					bookedStartDate.add(o.toString());
 					room.getBookedStartDate().add(o.toString());
 				}
 				
-				o1 =row.get("booked_end_date");
+				Object o1 =row.get("booked_end_date");
 				if (o1 != null) {
-//					bookedEndDate.add(o1.toString());
 					room.getBookedEndDate().add(o1.toString());
 				}
 			}
-		}
+		} 
+
+		//add the last object
+		result.add(room);
 
 		
 		return result;
 	}
-	 
+	
+	public List<RoomListView> getBookedRoomByUser(String bookedBy) {
+
+		String query = "select c.name 'building_name',a.id 'room_id', a.room_name, a.room_capacity, a.facilities, c.location, DATE_FORMAT(bb.booked_start_date,'%Y-%m-%d %H:%i') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%Y-%m-%d %H:%i') 'booked_end_date' \n" + 
+				"from room a\n" + 
+				"left join (\n" + 
+				"	select b.*\n" + 
+				"    from booked_room b\n" +  
+				") bb on (a.id = bb.room_id)\n" + 
+				"left join building c on (a.building_id = c.id) "
+				+"where bb.booked_by = '"+bookedBy+"' "
+				+"order by c.name "; 
+		
+		List<Map<String,Object>> rows = c3p0JdbcTemplate.queryForList(query);
+		List<RoomListView> result = new ArrayList<RoomListView>();
+		
+		Integer roomId= Integer.valueOf(rows.get(0).get("room_id").toString());
+		Map<String, Object> row = rows.get(0);
+		RoomListView room = new RoomListView();
+		room.setBuildingName(row.get("building_name").toString());
+		room.setFacilities(row.get("facilities").toString());
+		room.setLocation(row.get("location").toString());
+		room.setRoomCapacity(Integer.valueOf(row.get("room_capacity").toString()));
+		room.setRoomId(Integer.valueOf(row.get("room_id").toString()));
+		room.setRoomName(row.get("room_name").toString());
+		room.setBookedStartDate(new ArrayList<>());
+		room.setBookedEndDate(new ArrayList<>());
+		
+		for(int i=0;i<rows.size();i++) {
+			row = rows.get(i);
+			Integer currentRoomId = Integer.valueOf(row.get("room_id").toString());
+			if(roomId != currentRoomId) {
+				System.out.println(room.getRoomName()+"--" +room.getBookedStartDate());
+				result.add(room);
+				
+				room = new RoomListView();
+				room.setBuildingName(row.get("building_name").toString());
+				room.setFacilities(row.get("facilities").toString());
+				room.setLocation(row.get("location").toString());
+				room.setRoomCapacity(Integer.valueOf(row.get("room_capacity").toString()));
+				room.setRoomId(Integer.valueOf(row.get("room_id").toString()));
+				room.setRoomName(row.get("room_name").toString());
+				room.setBookedStartDate(new ArrayList<>());
+				room.setBookedEndDate(new ArrayList<>());
+				Object o =row.get("booked_start_date");
+				if (o != null) {
+					room.getBookedStartDate().add(o.toString());
+				}
+				
+				Object o1 =row.get("booked_end_date");
+				if (o1 != null) {
+					room.getBookedEndDate().add(o1.toString());
+				}
+				roomId = room.getRoomId();
+			} else {
+				Object o =row.get("booked_start_date");
+				if (o != null) {
+					room.getBookedStartDate().add(o.toString());
+				}
+				
+				Object o1 =row.get("booked_end_date");
+				if (o1 != null) {
+					room.getBookedEndDate().add(o1.toString());
+				}
+			}
+		}
+		result.add(room);
+
+		return result;
+	}
 	public int bookRoom(BookedRoom room) {
 		String query = 
 				"INSERT INTO booked_room (building_id,room_id, building_name, room_name, booked_start_date, booked_end_date, booked_by, meeting_name) "+
