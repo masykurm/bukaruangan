@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class RoomController {
 	private RoomService roomService;
 
 	// TODO: 
+	@CrossOrigin(origins="*")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms/book")
 	public ResponseEntity<?> bookRoom(@RequestBody BookedRoom bookedRoom) {
 
@@ -43,7 +45,8 @@ public class RoomController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	// TODO: 
+	// TODO:
+	@CrossOrigin(origins="*") 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms/available/{buildingId}/{meetingDate}")
 	public ResponseEntity<?> getAvailableRooms(
 			@PathVariable(name = "buildingId") Integer buildingId,
@@ -58,7 +61,8 @@ public class RoomController {
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
+
+	@CrossOrigin(origins="*")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms/list/{bookedBy}")
 	public ResponseEntity<?> getAvailableRooms(
 			@PathVariable(name = "bookedBy") String bookedBy) throws JsonProcessingException  {
@@ -74,6 +78,7 @@ public class RoomController {
 	}
 
 	// TODO: 
+	@CrossOrigin(origins="*")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/buildings/{buildingId}")
 	public ResponseEntity<?> getBuildingById(@PathVariable(name = "buildingId") Integer buildingId) {
 
@@ -87,6 +92,7 @@ public class RoomController {
 	}
 
 	// TODO: 
+	@CrossOrigin(origins="*")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/buildings")
 	public ResponseEntity<?> getBuildings() {
 
@@ -100,6 +106,7 @@ public class RoomController {
 	}
 	
 	// TODO: 
+	@CrossOrigin(origins="*")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/buildings/{buildingId}/rooms")
 	public ResponseEntity<?> getBuildingsRoom(@PathVariable(name = "buildingId") Integer buildingId) {
 
@@ -112,7 +119,8 @@ public class RoomController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	// TODO: 
+	// TODO:
+	@CrossOrigin(origins="*") 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms/{roomId}")
 	public ResponseEntity<?> getRoomById(@PathVariable(name = "roomId") Integer roomId) {
 
@@ -126,6 +134,7 @@ public class RoomController {
 	}
 
 	// TODO: 
+	@CrossOrigin(origins="*")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms")
 	public ResponseEntity<?> getRooms() {
 
