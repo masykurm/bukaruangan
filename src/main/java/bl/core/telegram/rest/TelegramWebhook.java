@@ -60,7 +60,7 @@ public class TelegramWebhook {
 	}
 	
 	
-	@Scheduled(fixedRate=20000)
+//	@Scheduled(fixedRate=20000)
 	public void sendMeetingReminder() {
 		
 		logger.info("Running meeting reminder job");
