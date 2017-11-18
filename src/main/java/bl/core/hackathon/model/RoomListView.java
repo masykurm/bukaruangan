@@ -5,9 +5,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import bl.core.rest.model.RoomListViewSerializer;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({  
@@ -19,7 +16,6 @@ import bl.core.rest.model.RoomListViewSerializer;
 	"location",
 	"booked_start_date",
 	"booked_end_date"})
-@JsonDeserialize(using = RoomListViewSerializer.class)
 public class RoomListView {
 	
 
@@ -46,11 +42,9 @@ public class RoomListView {
 	@JsonProperty("location")
 	private String location;
 
-	@JsonProperty("booked_start_date")
-	private List<String> bookedStartDate;
 
-	@JsonProperty("booked_end_date")
-	private List<String> bookedEndDate;
+	@JsonProperty("meetings")
+	private List<BookedRoom> meetings;
 	
 	public String getBuildingName() { 
 		return buildingName;
@@ -82,25 +76,12 @@ public class RoomListView {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-
-	@JsonProperty("booked_start_date")
-	public List<String> getBookedStartDate() {
-		return bookedStartDate;
+	
+	public List<BookedRoom> getMeetings() {
+		return meetings;
 	}
-
-	@JsonProperty("booked_start_date")
-	public void setBookedStartDate(List<String> bookedStartDate) {
-		this.bookedStartDate = bookedStartDate;
-	}
-
-	@JsonProperty("booked_end_date")
-	public List<String> getBookedEndDate() {
-		return bookedEndDate;
-	}
-
-	@JsonProperty("booked_end_date")
-	public void setBookedEndDate(List<String> bookedEndDate) {
-		this.bookedEndDate = bookedEndDate;
+	public void setMeetings(List<BookedRoom> meetings) {
+		this.meetings = meetings;
 	}
 	
 }

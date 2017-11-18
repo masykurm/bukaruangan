@@ -98,6 +98,19 @@ public class RoomController {
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	// TODO: 
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/buildings/{buildingId}/rooms")
+	public ResponseEntity<?> getBuildingsRoom(@PathVariable(name = "buildingId") Integer buildingId) {
+
+		List<Room> out = roomService.getRoomsByBuildingId(buildingId);
+
+		SchemaResponse response = new SchemaResponse();
+		response.setData(out);
+		response.setMetaResponse(new SchemaMetaResponse(HttpStatus.OK.toString(), 1));
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
 	// TODO: 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/rooms/{roomId}")

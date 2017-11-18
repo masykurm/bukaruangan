@@ -42,6 +42,9 @@ public class RoomService {
 	public List<RoomListView> getBookedRoomByUser(String bookedBy){
 		return service.getBookedRoomByUser(bookedBy);
 	}
+	public List<Room> getRoomsByBuildingId(Integer buildingId){
+		return service.getRoomsByBuildingId(buildingId);
+	}
 
 	public int bookRoom(BookedRoom room) {
 

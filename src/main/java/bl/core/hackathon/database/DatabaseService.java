@@ -48,6 +48,9 @@ public class DatabaseService implements DatabaseServiceInterface {
 	public List<RoomListView> getBookedRoomByUser(String bookedBy){
 		return repository.getBookedRoomByUser(bookedBy);
 	}
+	public List<Room> getRoomsByBuildingId(Integer buildingId){
+		return repository.getRoomsByBuildingId(buildingId);
+	}
 
 	public int bookRoom(BookedRoom room) {
 

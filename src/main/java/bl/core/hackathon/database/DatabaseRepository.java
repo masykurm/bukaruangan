@@ -2,12 +2,15 @@ package bl.core.hackathon.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.format.datetime.joda.LocalDateTimeParser;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -73,6 +76,19 @@ public class DatabaseRepository {
 		return result;
 	}
 
+	public List<Room> getRoomsByBuildingId(Integer buildingId) {
+		String query ="SELECT * from room where building_id="+buildingId;
+		List<Room> result = c3p0JdbcTemplate.query(query, 
+				(rs,rowNum ) -> new Room(
+						rs.getInt("id"),
+						rs.getInt("building_id"),
+						rs.getString("room_name"),
+						rs.getInt("room_capacity"),
+						rs.getString("room_location")
+						));
+		return result;
+	}
+
 	public Room getRoom(Integer roomId) {
 
 		String query = String.format("SELECT * FROM room WHERE id=%d", roomId);
@@ -104,14 +120,16 @@ public class DatabaseRepository {
 
 	public List<RoomListView> getAvailableRooms(Integer buildingId, String meetingDate) {
 
-		String query = "select c.name 'building_name',a.id 'room_id', a.room_name, a.room_capacity, a.facilities, c.location, DATE_FORMAT(bb.booked_start_date,'%Y-%m-%d %H:%i') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%Y-%m-%d %H:%i') 'booked_end_date' \n" + 
+		String query = "select c.name 'building_name',a.id 'room_id', a.room_name, a.room_capacity, a.facilities, c.location,bb.meeting_name, bb.booked_by, DATE_FORMAT(bb.booked_start_date,'%Y-%m-%d %H:%i') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%Y-%m-%d %H:%i') 'booked_end_date' \n" + 
 				"from room a\n" + 
 				"left join (\n" + 
 				"	select b.*\n" + 
 				"    from booked_room b\n" + 
 				"    where b.booked_start_date between '"+meetingDate+"' and '"+meetingDate+" 23:59:59'\n" + 
 				") bb on (a.id = bb.room_id)\n" + 
-				"left join building c on (a.building_id = c.id) order by c.name"; 
+				"left join building c on (a.building_id = c.id) "
+				+ " where c.id = "+ buildingId
+				+ " order by c.name"; 
 		
 		List<Map<String,Object>> rows = c3p0JdbcTemplate.queryForList(query);
 		List<RoomListView> result = new ArrayList<RoomListView>();
@@ -125,14 +143,15 @@ public class DatabaseRepository {
 		room.setRoomCapacity(Integer.valueOf(row.get("room_capacity").toString()));
 		room.setRoomId(Integer.valueOf(row.get("room_id").toString()));
 		room.setRoomName(row.get("room_name").toString());
-		room.setBookedStartDate(new ArrayList<>());
-		room.setBookedEndDate(new ArrayList<>());
+		room.setMeetings(new ArrayList<BookedRoom>());
 	
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		for(int i=0;i<rows.size();i++) {
 			row = rows.get(i);
 			Integer currentRoomId = Integer.valueOf(row.get("room_id").toString());
+
+			BookedRoom  meeting = new BookedRoom();
 			if(roomId != currentRoomId) {
-				System.out.println(room.getRoomName()+"--" +room.getBookedStartDate());
 				result.add(room);
 				
 				room = new RoomListView();
@@ -142,28 +161,35 @@ public class DatabaseRepository {
 				room.setRoomCapacity(Integer.valueOf(row.get("room_capacity").toString()));
 				room.setRoomId(Integer.valueOf(row.get("room_id").toString()));
 				room.setRoomName(row.get("room_name").toString());
-				room.setBookedStartDate(new ArrayList<>());
-				room.setBookedEndDate(new ArrayList<>());
+				room.setMeetings(new ArrayList<BookedRoom>());
 				Object o =row.get("booked_start_date");
 				if (o != null) {
-					room.getBookedStartDate().add(o.toString());
+					meeting.setBookedStartDate(LocalDateTime.parse(o.toString(),formatter));
+					meeting.setMeetingName(row.get("meeting_name").toString());
 				}
 				
 				Object o1 =row.get("booked_end_date");
 				if (o1 != null) {
-					room.getBookedEndDate().add(o1.toString());
+					meeting.setBookedEndDate(LocalDateTime.parse(o1.toString(),formatter));
+					meeting.setMeetingName(row.get("meeting_name").toString());
 				}
 				roomId = room.getRoomId();
+				room.getMeetings().add(meeting);
 			} else {
 				Object o =row.get("booked_start_date");
 				if (o != null) {
-					room.getBookedStartDate().add(o.toString());
+					meeting.setBookedStartDate(LocalDateTime.parse(o.toString(),formatter));
+					meeting.setBookedBy(row.get("booked_by").toString());
+					meeting.setMeetingName(row.get("meeting_name").toString());
 				}
 				
 				Object o1 =row.get("booked_end_date");
 				if (o1 != null) {
-					room.getBookedEndDate().add(o1.toString());
+					meeting.setBookedEndDate(LocalDateTime.parse(o1.toString(),formatter));
+					meeting.setBookedBy(row.get("booked_by").toString());
+					meeting.setMeetingName(row.get("meeting_name").toString());
 				}
+				room.getMeetings().add(meeting);
 			}
 		} 
 
@@ -176,7 +202,7 @@ public class DatabaseRepository {
 	
 	public List<RoomListView> getBookedRoomByUser(String bookedBy) {
 
-		String query = "select c.name 'building_name',a.id 'room_id', a.room_name, a.room_capacity, a.facilities, c.location, DATE_FORMAT(bb.booked_start_date,'%Y-%m-%d %H:%i') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%Y-%m-%d %H:%i') 'booked_end_date' \n" + 
+		String query = "select c.name 'building_name',a.id 'room_id', a.room_name, a.room_capacity, a.facilities, c.location,bb.meeting_name,bb.booked_by, DATE_FORMAT(bb.booked_start_date,'%Y-%m-%d %H:%i') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%Y-%m-%d %H:%i') 'booked_end_date' \n" + 
 				"from room a\n" + 
 				"left join (\n" + 
 				"	select b.*\n" + 
@@ -198,14 +224,13 @@ public class DatabaseRepository {
 		room.setRoomCapacity(Integer.valueOf(row.get("room_capacity").toString()));
 		room.setRoomId(Integer.valueOf(row.get("room_id").toString()));
 		room.setRoomName(row.get("room_name").toString());
-		room.setBookedStartDate(new ArrayList<>());
-		room.setBookedEndDate(new ArrayList<>());
-		
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		for(int i=0;i<rows.size();i++) {
 			row = rows.get(i);
 			Integer currentRoomId = Integer.valueOf(row.get("room_id").toString());
+			BookedRoom  meeting = new BookedRoom();
 			if(roomId != currentRoomId) {
-				System.out.println(room.getRoomName()+"--" +room.getBookedStartDate());
 				result.add(room);
 				
 				room = new RoomListView();
@@ -215,28 +240,40 @@ public class DatabaseRepository {
 				room.setRoomCapacity(Integer.valueOf(row.get("room_capacity").toString()));
 				room.setRoomId(Integer.valueOf(row.get("room_id").toString()));
 				room.setRoomName(row.get("room_name").toString());
-				room.setBookedStartDate(new ArrayList<>());
-				room.setBookedEndDate(new ArrayList<>());
+				room.setMeetings(new ArrayList<BookedRoom>());
 				Object o =row.get("booked_start_date");
 				if (o != null) {
-					room.getBookedStartDate().add(o.toString());
+					meeting.setBookedBy(row.get("booked_by").toString());
+					meeting.setBookedStartDate(LocalDateTime.parse(o.toString(),formatter));
+					meeting.setMeetingName(row.get("meeting_name").toString());
 				}
 				
 				Object o1 =row.get("booked_end_date");
 				if (o1 != null) {
-					room.getBookedEndDate().add(o1.toString());
+					meeting.setBookedBy(row.get("booked_by").toString());
+					meeting.setBookedEndDate(LocalDateTime.parse(o1.toString(),formatter));
+					meeting.setMeetingName(row.get("meeting_name").toString());
 				}
+				room.getMeetings().add(meeting);
 				roomId = room.getRoomId();
 			} else {
+
 				Object o =row.get("booked_start_date");
+				
+				
 				if (o != null) {
-					room.getBookedStartDate().add(o.toString());
+					meeting.setBookedBy(row.get("booked_by").toString());
+					meeting.setBookedStartDate(LocalDateTime.parse(o.toString(),formatter));
+					meeting.setMeetingName(row.get("meeting_name").toString());
 				}
 				
 				Object o1 =row.get("booked_end_date");
 				if (o1 != null) {
-					room.getBookedEndDate().add(o1.toString());
+					meeting.setBookedBy(row.get("booked_by").toString());
+					meeting.setBookedEndDate(LocalDateTime.parse(o1.toString(),formatter));
+					meeting.setMeetingName(row.get("meeting_name").toString());
 				}
+				room.getMeetings().add(meeting);
 			}
 		}
 		result.add(room);
