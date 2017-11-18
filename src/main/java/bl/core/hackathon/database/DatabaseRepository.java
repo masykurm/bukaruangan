@@ -134,6 +134,9 @@ public class DatabaseRepository {
 		List<Map<String,Object>> rows = c3p0JdbcTemplate.queryForList(query);
 		List<RoomListView> result = new ArrayList<RoomListView>();
 		
+
+		if (rows == null || (rows != null && rows.isEmpty())) return result;
+		
 		Integer roomId= Integer.valueOf(rows.get(0).get("room_id").toString());
 		Map<String, Object> row = rows.get(0);
 		RoomListView room = new RoomListView();
@@ -214,6 +217,8 @@ public class DatabaseRepository {
 		
 		List<Map<String,Object>> rows = c3p0JdbcTemplate.queryForList(query);
 		List<RoomListView> result = new ArrayList<RoomListView>();
+		
+		if (rows == null || (rows != null && rows.isEmpty())) return result;
 		
 		Integer roomId= Integer.valueOf(rows.get(0).get("room_id").toString());
 		Map<String, Object> row = rows.get(0);
