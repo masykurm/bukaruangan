@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({  
+	"building_id",  
 	"building_name", 
 	"room_id",  
 	"room_name", 
@@ -19,6 +20,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class RoomListView {
 	
 
+	@JsonProperty("building_id")
+	private Integer buildingId;
+	public Integer getBuildingId() {
+		return buildingId;
+	}
+	public void setBuildingId(Integer buildingId) {
+		this.buildingId = buildingId;
+	}
+	
 	@JsonProperty("building_name")
 	private String buildingName;
 	

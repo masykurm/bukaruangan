@@ -120,7 +120,7 @@ public class DatabaseRepository {
 
 	public List<RoomListView> getAvailableRooms(Integer buildingId, String meetingDate) {
 
-		String query = "select c.name 'building_name',a.id 'room_id', a.room_name, a.room_capacity, a.facilities, c.location,bb.meeting_name, bb.booked_by, DATE_FORMAT(bb.booked_start_date,'%Y-%m-%d %H:%i') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%Y-%m-%d %H:%i') 'booked_end_date' \n" + 
+		String query = "select c.id 'building_id', c.name 'building_name',a.id 'room_id', a.room_name, a.room_capacity, a.facilities, c.location,bb.meeting_name, bb.booked_by, DATE_FORMAT(bb.booked_start_date,'%Y-%m-%d %H:%i') 'booked_start_date', DATE_FORMAT(bb.booked_end_date,'%Y-%m-%d %H:%i') 'booked_end_date' \n" + 
 				"from room a\n" + 
 				"left join (\n" + 
 				"	select b.*\n" + 
@@ -140,6 +140,8 @@ public class DatabaseRepository {
 		Integer roomId= Integer.valueOf(rows.get(0).get("room_id").toString());
 		Map<String, Object> row = rows.get(0);
 		RoomListView room = new RoomListView();
+		
+		room.setBuildingId(Integer.valueOf(row.get("building_id").toString()));
 		room.setBuildingName(row.get("building_name").toString());
 		room.setFacilities(row.get("facilities").toString());
 		room.setLocation(row.get("location").toString());
@@ -158,6 +160,7 @@ public class DatabaseRepository {
 				result.add(room);
 				
 				room = new RoomListView();
+				room.setBuildingId(Integer.valueOf(row.get("building_id").toString()));
 				room.setBuildingName(row.get("building_name").toString());
 				room.setFacilities(row.get("facilities").toString());
 				room.setLocation(row.get("location").toString());
@@ -307,7 +310,7 @@ public class DatabaseRepository {
 	public List<BookedRoom> getNearestMeeting(){
 		String query = "select * \n" + 
 				"from booked_room\n" + 
-				"where booked_start_date >= NOW() - Interval 15 minute";
+				"where NOW() + Interval 15 minute <= booked_start_date";
 		List<BookedRoom> result =  c3p0JdbcTemplate.query(query, 
 				(rs,rowNum ) -> new BookedRoom(
 
@@ -316,8 +319,8 @@ public class DatabaseRepository {
 						rs.getInt("building_id"),
 						rs.getString("building_name"),
 						rs.getString("room_name"),
-						LocalDateTime.ofInstant(rs.getDate("booked_start_date").toInstant(),ZoneId.systemDefault()),
-						LocalDateTime.ofInstant(rs.getDate("booked_end_date").toInstant(),ZoneId.systemDefault()),
+						rs.getTimestamp("booked_start_date") == null ? null : LocalDateTime.ofInstant(rs.getTimestamp("booked_start_date").toInstant(),ZoneId.systemDefault()),
+						rs.getTimestamp("booked_end_date") == null ? null : LocalDateTime.ofInstant(rs.getTimestamp("booked_end_date").toInstant(),ZoneId.systemDefault()),
 						rs.getString("booked_by"),
 						rs.getString("meeting_name")
 						));

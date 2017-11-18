@@ -146,4 +146,17 @@ public class RoomController {
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@CrossOrigin(origins="*")
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/meetings/nearest")
+	public ResponseEntity<?> getNearestMeeting() {
+
+		List<BookedRoom> out = roomService.getNearestMeeting();
+		
+		SchemaResponse response = new SchemaResponse();
+		response.setData(out);
+		response.setMetaResponse(new SchemaMetaResponse(HttpStatus.OK.toString(), 1));
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 }
