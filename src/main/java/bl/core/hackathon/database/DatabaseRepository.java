@@ -224,6 +224,7 @@ public class DatabaseRepository {
 		room.setRoomCapacity(Integer.valueOf(row.get("room_capacity").toString()));
 		room.setRoomId(Integer.valueOf(row.get("room_id").toString()));
 		room.setRoomName(row.get("room_name").toString());
+		room.setMeetings(new ArrayList<BookedRoom>());
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		for(int i=0;i<rows.size();i++) {

@@ -16,6 +16,7 @@ import org.telegram.telegrambots.ApiContext;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
@@ -91,6 +92,8 @@ public class TelegramWebhook {
 		SendMessage messageReturn = new SendMessage();
 		messageReturn.setChatId(userId);
 		messageReturn.setText(message.replaceAll("\\n", "\n"));
+		
+		
 
 		ReplyKeyboardRemove removekeyboard = new ReplyKeyboardRemove();
 		messageReturn.setReplyMarkup(removekeyboard);
