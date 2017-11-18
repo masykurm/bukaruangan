@@ -3,6 +3,7 @@ package bl.core.hackathon.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.format.datetime.joda.LocalDateTimeParser;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -298,4 +298,23 @@ public class DatabaseRepository {
 		return result;
 	}
 
+	public List<BookedRoom> getNearestMeeting(){
+		String query = "select * \n" + 
+				"from booked_room\n" + 
+				"where booked_start_date >= NOW() - Interval 15 minute";
+		List<BookedRoom> result =  c3p0JdbcTemplate.query(query, 
+				(rs,rowNum ) -> new BookedRoom(
+
+						rs.getInt("id"),
+						rs.getInt("room_id"),
+						rs.getInt("building_id"),
+						rs.getString("building_name"),
+						rs.getString("room_name"),
+						LocalDateTime.ofInstant(rs.getDate("booked_start_date").toInstant(),ZoneId.systemDefault()),
+						LocalDateTime.ofInstant(rs.getDate("booked_end_date").toInstant(),ZoneId.systemDefault()),
+						rs.getString("booked_by"),
+						rs.getString("meeting_name")
+						));
+		return result;
+	}
 }

@@ -45,6 +45,10 @@ public class RoomService {
 	public List<Room> getRoomsByBuildingId(Integer buildingId){
 		return service.getRoomsByBuildingId(buildingId);
 	}
+	
+	public List<BookedRoom> getNearestMeeting(){
+		return service.getNearestMeeting();
+	}
 
 	public int bookRoom(BookedRoom room) {
 

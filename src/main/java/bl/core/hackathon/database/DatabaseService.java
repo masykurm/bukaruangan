@@ -52,6 +52,9 @@ public class DatabaseService implements DatabaseServiceInterface {
 		return repository.getRoomsByBuildingId(buildingId);
 	}
 
+	public List<BookedRoom> getNearestMeeting(){
+		return repository.getNearestMeeting();
+	}
 	public int bookRoom(BookedRoom room) {
 
 		return repository.bookRoom(room);

@@ -21,6 +21,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 	"booked_by" })
 public class BookedRoom {
 
+	public BookedRoom() {
+		
+	}
+	public BookedRoom(Integer id, Integer buildingId, Integer roomId, String buildingName, String roomName,
+			LocalDateTime bookedStartDate, LocalDateTime bookedEndDate, String bookedBy, String meetingName) {
+		super();
+		this.id = id;
+		this.buildingId = buildingId;
+		this.roomId = roomId;
+		this.buildingName = buildingName;
+		this.roomName = roomName;
+		this.bookedStartDate = bookedStartDate;
+		this.bookedEndDate = bookedEndDate;
+		this.bookedBy = bookedBy;
+		this.meetingName = meetingName;
+	}
+
+
 	@JsonProperty("id")
 	private Integer id;
 
@@ -83,39 +101,39 @@ public class BookedRoom {
 	}
 
 	@JsonProperty("booked_start_date")
-	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime bookedStartDate;
 
 	@JsonProperty("booked_start_date")
-	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
 	public LocalDateTime getBookedStartDate() {
 		return bookedStartDate;
 	}
 
 	@JsonProperty("booked_start_date")
-	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
 	public void setBookedStartDate(LocalDateTime bookedStartDate) {
 		this.bookedStartDate = bookedStartDate;
 	}
 	
 	@JsonProperty("booked_end_date")
-	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime bookedEndDate;
 
 	@JsonProperty("booked_end_date")
-	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
 	public LocalDateTime getBookedEndDate() {
 		return bookedEndDate;
 	}
 
 	@JsonProperty("booked_end_date")
-	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
 	public void setBookedEndDate(LocalDateTime bookedEndDate) {
 		this.bookedEndDate = bookedEndDate;
 	}
