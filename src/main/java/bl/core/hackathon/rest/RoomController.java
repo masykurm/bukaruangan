@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -67,6 +68,7 @@ public class RoomController {
 	public ResponseEntity<?> getAvailableRooms(
 			@PathVariable(name = "bookedBy") String bookedBy) throws JsonProcessingException  {
 
+		System.out.println("bookedBy: "+bookedBy);
 		List<RoomListView> out = roomService.getBookedRoomByUser(bookedBy);
 		
 		 

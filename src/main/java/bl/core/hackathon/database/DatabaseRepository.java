@@ -215,7 +215,7 @@ public class DatabaseRepository {
 				"    from booked_room b\n" +  
 				") bb on (a.id = bb.room_id)\n" + 
 				"left join building c on (a.building_id = c.id) "
-				+"where bb.booked_by = '"+bookedBy+"' "
+				+"where bb.booked_by like '"+bookedBy+"%' "
 				+"order by c.name "; 
 		
 		List<Map<String,Object>> rows = c3p0JdbcTemplate.queryForList(query);
